@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Options Trading for Beginners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0f13;
+    --surface: #16181f;
+    --surface2: #1e2029;
+    --surface3: #252733;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.14);
+    --text: #e8eaf0;
+    --muted: #7c7f8e;
+    --accent-green: #23d18b;
+    --accent-green-dim: rgba(35,209,139,0.12);
+    --accent-coral: #ff6b6b;
+    --accent-coral-dim: rgba(255,107,107,0.12);
+    --accent-amber: #ffd166;
+    --accent-amber-dim: rgba(255,209,102,0.1);
+    --accent-blue: #6eb5ff;
+    --accent-blue-dim: rgba(110,181,255,0.1);
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 64px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(35,209,139,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--accent-green-dim);
+    color: var(--accent-green);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(35,209,139,0.2);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff 30%, var(--accent-green) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto 32px;
+    font-size: 16px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .num { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--accent-green); }
+  .hero-stat .lbl { font-size: 12px; color: var(--muted); letter-spacing: 0.05em; }
+
+  /* NAV TABS */
+  .nav-wrap {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(14,15,19,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+  .nav {
+    display: flex;
+    gap: 0;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    padding: 16px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active {
+    color: var(--accent-green);
+    border-bottom-color: var(--accent-green);
+    font-weight: 500;
+  }
+
+  /* CONTENT */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  .section { display: none; animation: rise 0.22s ease; }
+  .section.visible { display: block; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.15s;
+  }
+  .card:hover { border-color: var(--border-hover); }
+
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 600px) { .card-grid { grid-template-columns: 1fr; } }
+
+  .card-call { border-left: 3px solid var(--accent-green); }
+  .card-put  { border-left: 3px solid var(--accent-coral); }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 500; padding: 3px 10px;
+    border-radius: 20px; margin-bottom: 12px;
+    font-family: var(--font-mono); letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .badge-green { background: var(--accent-green-dim); color: var(--accent-green); }
+  .badge-coral { background: var(--accent-coral-dim); color: var(--accent-coral); }
+  .badge-blue  { background: var(--accent-blue-dim);  color: var(--accent-blue); }
+  .badge-amber { background: var(--accent-amber-dim); color: var(--accent-amber); }
+
+  h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.01em; }
+  h3 { font-family: var(--font-display); font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+  p  { color: rgba(232,234,240,0.75); line-height: 1.7; }
+  strong { color: var(--text); font-weight: 500; }
+
+  /* ANALOGY BOX */
+  .analogy {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent-amber);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 14px 16px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .analogy strong { color: var(--accent-amber); }
+
+  /* STEPS */
+  .steps { display: flex; flex-direction: column; gap: 0; margin-top: 16px; }
+  .step {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-dot {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+    margin-top: 2px;
+  }
+  .dot-green { background: var(--accent-green-dim); color: var(--accent-green); }
+  .dot-coral { background: var(--accent-coral-dim); color: var(--accent-coral); }
+  .dot-blue  { background: var(--accent-blue-dim);  color: var(--accent-blue); }
+  .step p { font-size: 14px; }
+
+  /* TERM GRID */
+  .term-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 580px) { .term-grid { grid-template-columns: 1fr; } }
+  .term {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    transition: border-color 0.15s;
+  }
+  .term:hover { border-color: var(--border-hover); }
+  .term-name { font-family: var(--font-mono); font-size: 12px; color: var(--accent-green); margin-bottom: 6px; font-weight: 500; }
+  .term-def  { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  /* SIMULATOR */
+  .sim-control { margin-bottom: 18px; }
+  .sim-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .sim-label span { font-size: 13px; color: var(--muted); }
+  .sim-label .sim-val { font-family: var(--font-mono); font-size: 14px; color: var(--text); font-weight: 500; }
+  input[type=range] {
+    width: 100%; appearance: none; height: 4px;
+    background: var(--surface3); border-radius: 2px; outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--accent-green); cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(35,209,139,0.2);
+  }
+  select {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); padding: 10px 14px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-size: 14px; cursor: pointer; outline: none;
+    margin-bottom: 18px;
+  }
+  select:focus { border-color: var(--accent-green); }
+
+  .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+  .result-card {
+    border-radius: var(--radius-sm);
+    padding: 16px; text-align: center;
+    border: 1px solid var(--border);
+  }
+  .result-card .r-label { font-size: 11px; font-family: var(--font-mono); color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .result-card .r-val  { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+
+  .canvas-wrap { background: var(--surface2); border-radius: var(--radius-sm); padding: 16px; margin-top: 8px; }
+  canvas { display: block; width: 100%; }
+
+  .sim-explain {
+    margin-top: 14px; padding: 12px 16px;
+    background: var(--surface2); border-radius: var(--radius-sm);
+    font-size: 13px; color: var(--muted); line-height: 1.6;
+    border-left: 3px solid var(--accent-blue);
+  }
+
+  /* RISK TABLE */
+  .risk-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .risk-table th {
+    text-align: left; padding: 10px 14px;
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); border-bottom: 1px solid var(--border);
+  }
+  .risk-table td { padding: 14px; vertical-align: top; border-bottom: 1px solid var(--border); color: var(--muted); line-height: 1.5; }
+  .risk-table tr:last-child td { border-bottom: none; }
+  .risk-table td:first-child { color: var(--text); font-weight: 500; font-size: 13px; white-space: nowrap; }
+  .risk-table tr:hover td { background: var(--surface2); }
+
+  /* RULES LIST */
+  .rules { list-style: none; }
+  .rule {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+    font-size: 14px; color: var(--muted); line-height: 1.55;
+  }
+  .rule:last-child { border-bottom: none; }
+  .rule-num {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+    color: var(--accent-green); flex-shrink: 0; margin-top: 2px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent-green-dim); display: flex; align-items: center; justify-content: center;
+  }
+
+  /* COMPARISON TABLE */
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .compare-table th { padding: 10px 14px; border-bottom: 1px solid var(--border); font-weight: 500; text-align: left; }
+  .compare-table th:nth-child(2) { color: var(--accent-green); }
+  .compare-table th:nth-child(3) { color: var(--accent-coral); }
+  .compare-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+  .compare-table td:first-child { color: var(--text); }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: var(--surface2); }
+
+  /* FOOTER */
+  .footer {
+    text-align: center; padding: 32px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+  }
+  .footer a { color: var(--accent-green); text-decoration: none; }
+
+  /* SCROLL TOP */
+  .scroll-top {
+    position: fixed; bottom: 24px; right: 24px;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--surface3); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: all 0.2s;
+    z-index: 200;
+  }
+  .scroll-top.show { opacity: 1; pointer-events: all; }
+  .scroll-top:hover { background: var(--surface); color: var(--text); border-color: var(--border-hover); }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-badge">📈 Beginner's Guide</div>
+  <h1>Options Trading<br>Demystified</h1>
+  <p>Everything a first-timer needs — concepts, terms, a live payoff simulator, and the rules that keep you safe.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">5</div><div class="lbl">Chapters</div></div>
+    <div class="hero-stat"><div class="num">10</div><div class="lbl">Key terms</div></div>
+    <div class="hero-stat"><div class="num">1</div><div class="lbl">Live simulator</div></div>
+    <div class="hero-stat"><div class="num">6</div><div class="lbl">Golden rules</div></div>
+  </div>
+</section>
+
+<nav class="nav-wrap">
+  <div class="nav">
+    <button class="nav-btn active" onclick="show('intro', this)">What are options?</button>
+    <button class="nav-btn" onclick="show('types', this)">Calls vs Puts</button>
+    <button class="nav-btn" onclick="show('terms', this)">Key Terms</button>
+    <button class="nav-btn" onclick="show('sim', this)">Simulator</button>
+    <button class="nav-btn" onclick="show('risk', this)">Risks & Rules</button>
+  </div>
+</nav>
+
+<main class="content">
+
+  <!-- INTRO -->
+  <div id="intro" class="section visible">
+    <div class="card">
+      <span class="badge badge-blue">Overview</span>
+      <h2>An option is a contract — not a stock</h2>
+      <p>When you buy a <strong>stock</strong>, you own a piece of a company. When you buy an <strong>option</strong>, you own a <em>contract</em> that gives you the right — but not the obligation — to buy or sell that stock at a fixed price before a deadline.</p>
+      <div class="analogy">
+        <strong>Real-world analogy:</strong> You find a house for $300,000. You pay the seller $5,000 to "reserve" it at that price for 90 days. If prices rise to $350,000, you lock in the lower price. If they drop, you walk away — losing only your $5,000. <strong>That reservation fee is your option premium.</strong>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card card-call" style="margin-bottom:0">
+        <span class="badge badge-green">Buyer</span>
+        <h3>Option buyer</h3>
+        <p>Pays a <strong>premium</strong> upfront. Gets the right to buy or sell shares. Max loss = premium paid. Potential gains can be large.</p>
+      </div>
+      <div class="card card-put" style="margin-bottom:0">
+        <span class="badge badge-coral">Seller</span>
+        <h3>Option seller</h3>
+        <p>Collects the <strong>premium</strong> upfront. Obligated to fulfill if the buyer exercises. Max gain = premium. Risk can be unlimited.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <span class="badge badge-amber">Why trade options?</span>
+      <div class="steps">
+        <div class="step">
+          <div class="step-dot dot-green">🛡</div>
+          <p><strong>Hedging</strong> — protect shares you already own from a market downturn without selling them.</p>
+        </div>
+        <div class="step">
+          <div class="step-dot dot-blue">⚡</div>
+          <p><strong>Leverage</strong> — control 100 shares for a fraction of the cost. A $500 option can move like $15,000 in stock.</p>
+        </div>
+        <div class="step">
+          <div class="step-dot dot-green">💰</div>
+          <p><strong>Income</strong> — sell options repeatedly to collect premium as a recurring income stream.</p>
+        </div>
+        <div class="step">
+          <div class="step-dot dot-blue">🎯</div>
+          <p><strong>Speculation</strong> — bet on direction, volatility, or time with a clearly defined max loss.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALLS vs PUTS -->
+  <div id="types" class="section">
+    <div class="card card-call">
+      <span class="badge badge-green">Call option</span>
+      <h2>The right to BUY shares</h2>
+      <p>You buy a <strong>call</strong> when you believe a stock will go <strong>up</strong>. It grants the right to purchase 100 shares at the strike price — even if the market price is higher.</p>
+      <div class="analogy">
+        <strong>Example:</strong> Apple trades at $180. You buy a call with a $185 strike for $4/share ($400 total). If Apple rises to $200, you buy at $185 — profit is $200 − $185 − $4 = <strong style="color: #23d18b">$11/share ($1,100)</strong>. If Apple stays below $185, you lose only your $400 premium.
+      </div>
+      <div class="steps" style="margin-top: 16px;">
+        <div class="step">
+          <div class="step-dot dot-blue">📅</div>
+          <p><strong>Today:</strong> Pay $400 premium. You own the right to buy 100 Apple shares at $185.</p>
+        </div>
+        <div class="step">
+          <div class="step-dot dot-green">✅</div>
+          <p><strong>Stock rises above $185:</strong> Option is "in the money." Sell the contract for a profit or exercise it.</p>
+        </div>
+        <div class="step">
+          <div class="step-dot dot-coral">✗</div>
+          <p><strong>Stock stays below $185:</strong> Option expires worthless. You lose the $400. Nothing more.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-put" style="margin-top: 0;">
+      <span class="badge badge-coral">Put option</span>
+      <h2>The right to SELL shares</h2>
+      <p>You buy a <strong>put</strong> when you believe a stock will go <strong>down</strong>. It grants the right to sell 100 shares at the strike price — even if the market is lower.</p>
+      <div class="analogy">
+        <strong>Example:</strong> Tesla is at $250. You buy a put with a $240 strike for $5/share ($500 total). If Tesla falls to $200, you sell at $240 — profit is $240 − $200 − $5 = <strong style="color: #23d18b">$35/share ($3,500)</strong>. If Tesla stays above $240, you lose your $500.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: 14px;">Side-by-side comparison</h3>
+      <table class="compare-table">
+        <tr><th>Aspect</th><th>📈 Call</th><th>📉 Put</th></tr>
+        <tr><td>You profit when</td><td style="color: var(--accent-green)">Stock goes up</td><td style="color: var(--accent-coral)">Stock goes down</td></tr>
+        <tr><td>Right to</td><td>Buy 100 shares</td><td>Sell 100 shares</td></tr>
+        <tr><td>Max loss (buyer)</td><td>Premium paid</td><td>Premium paid</td></tr>
+        <tr><td>Breakeven point</td><td>Strike + premium</td><td>Strike − premium</td></tr>
+        <tr><td>Best market condition</td><td>Bullish / rising</td><td>Bearish / falling</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- TERMS -->
+  <div id="terms" class="section">
+    <div class="card">
+      <span class="badge badge-blue">Glossary</span>
+      <h2 style="margin-bottom: 16px;">10 terms every options trader must know</h2>
+      <div class="term-grid">
+        <div class="term">
+          <div class="term-name">Strike price</div>
+          <div class="term-def">The locked-in price at which you can buy (call) or sell (put) the stock, no matter what the market is doing.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">Premium</div>
+          <div class="term-def">What you pay for the contract. One contract = 100 shares, so a $5 premium costs $500 total.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">Expiration date</div>
+          <div class="term-def">The deadline. After this, the option is either exercised, sold, or expires worthless. No extensions.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">In the money (ITM)</div>
+          <div class="term-def">A call is ITM when stock > strike. A put is ITM when stock < strike. Has real intrinsic value right now.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">Out of the money (OTM)</div>
+          <div class="term-def">The option has no intrinsic value yet. Cheaper to buy, but may expire worthless if the stock doesn't move enough.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">At the money (ATM)</div>
+          <div class="term-def">Strike price equals (or is very close to) the current stock price. Highest sensitivity to moves.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">Delta (Δ)</div>
+          <div class="term-def">How much the option moves per $1 change in stock. Delta 0.5 = the option gains $0.50 for every $1 the stock gains.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">Theta (Θ)</div>
+          <div class="term-def">Time decay — the daily cost of holding an option. Options lose value every single day as expiration approaches.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">Implied volatility</div>
+          <div class="term-def">The market's estimate of future price swings. High IV = expensive options. Spikes before earnings announcements.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">Exercise</div>
+          <div class="term-def">Actually using the contract to buy/sell shares at the strike. Most traders just sell the option contract instead.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIMULATOR -->
+  <div id="sim" class="section">
+    <div class="card">
+      <span class="badge badge-green">Interactive</span>
+      <h2 style="margin-bottom: 20px;">Payoff simulator</h2>
+
+      <div class="sim-control">
+        <div class="sim-label"><span>Option type</span></div>
+        <select id="optType" onchange="calc()">
+          <option value="call">📈 Call option (bet on price rising)</option>
+          <option value="put">📉 Put option (bet on price falling)</option>
+        </select>
+      </div>
+
+      <div class="sim-control">
+        <div class="sim-label"><span>Strike price</span><span class="sim-val" id="strikeV">$150</span></div>
+        <input type="range" id="strike" min="50" max="250" value="150" step="5" oninput="calc()">
+      </div>
+      <div class="sim-control">
+        <div class="sim-label"><span>Premium paid (per share)</span><span class="sim-val" id="premiumV">$5</span></div>
+        <input type="range" id="premium" min="1" max="30" value="5" step="1" oninput="calc()">
+      </div>
+      <div class="sim-control">
+        <div class="sim-label"><span>Stock price at expiry</span><span class="sim-val" id="expV">$165</span></div>
+        <input type="range" id="expPrice" min="50" max="300" value="165" step="5" oninput="calc()">
+      </div>
+
+      <div class="result-grid" id="results"></div>
+
+      <div class="canvas-wrap">
+        <canvas id="chart" height="180"></canvas>
+      </div>
+
+      <div class="sim-explain" id="explain"></div>
+    </div>
+  </div>
+
+  <!-- RISK -->
+  <div id="risk" class="section">
+    <div class="card">
+      <span class="badge badge-amber">Risk management</span>
+      <h2 style="margin-bottom: 16px;">5 risks every beginner must understand</h2>
+      <table class="risk-table">
+        <tr><th>Risk</th><th>What it means</th><th>How to manage it</th></tr>
+        <tr>
+          <td>⏳ Time decay</td>
+          <td>Options lose value every day. A flat stock still costs you money.</td>
+          <td>Buy options with 30–60+ days to expiry. Avoid 0–7 day contracts as a beginner.</td>
+        </tr>
+        <tr>
+          <td>💀 100% loss</td>
+          <td>An option can expire completely worthless. Every dollar of premium is gone.</td>
+          <td>Never risk money you can't afford to lose entirely. Start with small positions.</td>
+        </tr>
+        <tr>
+          <td>♾️ Naked selling</td>
+          <td>Selling uncovered calls = unlimited potential loss if the stock rockets.</td>
+          <td>Beginners: only sell covered calls (you must own the underlying shares first).</td>
+        </tr>
+        <tr>
+          <td>💥 Volatility crush</td>
+          <td>IV collapses after earnings even if you're right on direction — option loses value.</td>
+          <td>Understand implied volatility before trading around events like earnings reports.</td>
+        </tr>
+        <tr>
+          <td>⚡ Leverage cuts both ways</td>
+          <td>A 5% stock move can mean a 50%+ option move — in either direction.</td>
+          <td>Size each trade to risk ≤ 1–2% of your total account. Discipline above all.</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <span class="badge badge-green">Golden rules</span>
+      <h2 style="margin-bottom: 16px;">6 rules for beginner options traders</h2>
+      <ul class="rules">
+        <li class="rule"><span class="rule-num">01</span><div>Paper trade first — use a simulator with fake money until you're <strong>consistently profitable</strong> before risking real capital.</div></li>
+        <li class="rule"><span class="rule-num">02</span><div>Only trade options on stocks you <strong>already follow and understand</strong>. Don't trade what you don't know.</div></li>
+        <li class="rule"><span class="rule-num">03</span><div>Start by <strong>buying calls and puts only</strong>. Avoid selling options until you have real experience.</div></li>
+        <li class="rule"><span class="rule-num">04</span><div>Set a <strong>max loss before entering every trade</strong>. Exit automatically when you hit it. No exceptions.</div></li>
+        <li class="rule"><span class="rule-num">05</span><div><strong>Avoid earnings plays</strong> until you understand implied volatility and volatility crush cold.</div></li>
+        <li class="rule"><span class="rule-num">06</span><div>Never risk more than <strong>2–5% of your total account</strong> on a single options trade. Protect your capital first.</div></li>
+      </ul>
+    </div>
+
+    <div class="card" style="background: var(--accent-green-dim); border-color: rgba(35,209,139,0.2);">
+      <h3 style="color: var(--accent-green); margin-bottom: 8px;">⚠️ Disclaimer</h3>
+      <p style="font-size: 13px; color: rgba(232,234,240,0.6);">This guide is for <strong>educational purposes only</strong> and does not constitute financial advice. Options trading involves significant risk and is not suitable for all investors. Consult a qualified financial advisor before trading.</p>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <p>Options Trading for Beginners &nbsp;·&nbsp; Educational guide only &nbsp;·&nbsp; Not financial advice</p>
+</footer>
+
+<button class="scroll-top" id="scrollBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  function show(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('visible');
+    btn.classList.add('active');
+    window.scrollTo({ top: document.querySelector('.nav-wrap').offsetTop - 4, behavior: 'smooth' });
+    if (id === 'sim') setTimeout(calc, 60);
+  }
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('scrollBtn').classList.toggle('show', window.scrollY > 300);
+  });
+
+  function calc() {
+    const type = document.getElementById('optType').value;
+    const strike = +document.getElementById('strike').value;
+    const premium = +document.getElementById('premium').value;
+    const exp = +document.getElementById('expPrice').value;
+
+    document.getElementById('strikeV').textContent = '$' + strike;
+    document.getElementById('premiumV').textContent = '$' + premium;
+    document.getElementById('expV').textContent = '$' + exp;
+
+    const intrinsic = type === 'call' ? Math.max(0, exp - strike) : Math.max(0, strike - exp);
+    const profit = (intrinsic - premium) * 100;
+    const maxLoss = premium * 100;
+    const breakeven = type === 'call' ? strike + premium : strike - premium;
+    const itm = (type === 'call' && exp > strike) || (type === 'put' && exp < strike);
+
+    const profitColor = profit >= 0 ? '#23d18b' : '#ff6b6b';
+    const profitBg = profit >= 0 ? 'rgba(35,209,139,0.08)' : 'rgba(255,107,107,0.08)';
+    const profitBorder = profit >= 0 ? 'rgba(35,209,139,0.2)' : 'rgba(255,107,107,0.2)';
+
+    document.getElementById('results').innerHTML = `
+      <div class="result-card" style="background:${profitBg}; border-color:${profitBorder}">
+        <div class="r-label">${profit >= 0 ? 'Profit' : 'Loss'}</div>
+        <div class="r-val" style="color:${profitColor}">${profit >= 0 ? '+' : ''}$${Math.round(Math.abs(profit))}</div>
+      </div>
+      <div class="result-card" style="background:rgba(255,209,102,0.07); border-color:rgba(255,209,102,0.2)">
+        <div class="r-label">Breakeven</div>
+        <div class="r-val" style="color:#ffd166">$${breakeven}</div>
+      </div>
+      <div class="result-card" style="background:rgba(255,107,107,0.07); border-color:rgba(255,107,107,0.2)">
+        <div class="r-label">Max loss</div>
+        <div class="r-val" style="color:#ff6b6b">$${maxLoss}</div>
+      </div>`;
+
+    const dir = type === 'call' ? 'above' : 'below';
+    document.getElementById('explain').textContent = itm
+      ? `The stock expired ${dir} the strike — your option is in the money. ${profit > 0 ? 'After subtracting the $' + premium + '/share premium, you net $' + Math.round(profit) + ' profit.' : 'However, the premium of $' + premium + '/share still results in a $' + Math.abs(Math.round(profit)) + ' net loss.'}`
+      : `The stock didn't move ${dir} the strike price of $${strike}. The option expires worthless and you lose your full premium of $${premium}/share — $${maxLoss} total.`;
+
+    drawChart(type, strike, premium, exp);
+  }
+
+  function drawChart(type, strike, premium, expPrice) {
+    const canvas = document.getElementById('chart');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = 180 * dpr;
+    canvas.style.height = '180px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const W = rect.width, H = 180;
+
+    const minS = Math.max(10, strike - 70), maxS = strike + 90;
+    const ps = [], pls = [];
+    for (let p = minS; p <= maxS; p += 2) {
+      ps.push(p);
+      const intr = type === 'call' ? Math.max(0, p - strike) : Math.max(0, strike - p);
+      pls.push((intr - premium) * 100);
+    }
+
+    const maxP = Math.max(...pls) * 1.1;
+    const minP = Math.min(...pls, -premium * 130);
+    const range = maxP - minP || 1;
+    const pad = { l: 60, r: 16, t: 16, b: 32 };
+    const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+
+    ctx.clearRect(0, 0, W, H);
+
+    const toX = p => pad.l + ((p - minS) / (maxS - minS)) * cw;
+    const toY = v => pad.t + ch - ((v - minP) / range) * ch;
+    const zY = toY(0);
+
+    // Grid lines
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.t + (ch / 4) * i;
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cw, y);
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 0.5; ctx.stroke();
+      const val = maxP - (range / 4) * i;
+      ctx.fillStyle = '#5a5d6e'; ctx.font = '10px DM Mono, monospace'; ctx.textAlign = 'right';
+      ctx.fillText((val >= 0 ? '+' : '') + '$' + Math.round(val), pad.l - 6, y + 3);
+    }
+
+    // Zero line
+    ctx.beginPath(); ctx.moveTo(pad.l, zY); ctx.lineTo(pad.l + cw, zY);
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1; ctx.stroke();
+
+    // Breakeven dashed
+    const be = type === 'call' ? strike + premium : strike - premium;
+    const beX = toX(be);
+    if (beX >= pad.l && beX <= pad.l + cw) {
+      ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.moveTo(beX, pad.t); ctx.lineTo(beX, zY);
+      ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#ffd166'; ctx.font = '9px DM Mono, monospace'; ctx.textAlign = 'center';
+      ctx.fillText('B/E $' + be, beX, pad.t + 10);
+    }
+
+    // Fill under/above zero
+    ctx.save();
+    ctx.beginPath();
+    ps.forEach((p, i) => { const x = toX(p), y = toY(pls[i]); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+    ctx.lineTo(toX(ps[ps.length - 1]), zY); ctx.lineTo(toX(ps[0]), zY); ctx.closePath();
+    ctx.fillStyle = 'rgba(35,209,139,0.08)'; ctx.fill(); ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ps.forEach((p, i) => {
+      const x = toX(p), y = toY(Math.min(0, pls[i]));
+      if (i === 0) ctx.moveTo(x, zY);
+      if (pls[i] < 0) ctx.lineTo(x, y);
+    });
+    ctx.lineTo(toX(ps[ps.length - 1]), zY); ctx.closePath();
+    ctx.fillStyle = 'rgba(255,107,107,0.08)'; ctx.fill(); ctx.restore();
+
+    // Main payoff line
+    ctx.beginPath();
+    ps.forEach((p, i) => { const x = toX(p), y = toY(pls[i]); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+    ctx.strokeStyle = '#23d18b'; ctx.lineWidth = 2.5; ctx.stroke();
+
+    // Dot for current expiry price
+    const dotX = toX(expPrice);
+    const dotPL = type === 'call' ? (Math.max(0, expPrice - strike) - premium) * 100 : (Math.max(0, strike - expPrice) - premium) * 100;
+    const dotY2 = toY(dotPL);
+    ctx.beginPath(); ctx.arc(dotX, dotY2, 5, 0, Math.PI * 2);
+    ctx.fillStyle = dotPL >= 0 ? '#23d18b' : '#ff6b6b'; ctx.fill();
+    ctx.strokeStyle = '#0e0f13'; ctx.lineWidth = 2; ctx.stroke();
+
+    // X-axis labels
+    ctx.fillStyle = '#5a5d6e'; ctx.font = '10px DM Mono, monospace'; ctx.textAlign = 'center';
+    [minS, strike, maxS].forEach(p => ctx.fillText('$' + p, toX(p), H - 8));
+  }
+
+  calc();
+</script>
+</body>
+</html>
